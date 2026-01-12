@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NBA Live Board</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <div>
+          <h1>NBA Live Board</h1>
+          <p class="subhead">
+            Live scores from API-Sports and pregame moneyline odds from The Odds
+            API.
+          </p>
+        </div>
+        <div class="controls">
+          <form method="get" action="/">
+            <button type="submit">Refresh</button>
+          </form>
+        </div>
+      </header>
+
+      <% if (typeof error !== 'undefined') { %>
+      <div class="error">⚠️ <%= error %></div>
+      <% } %>
+
+      <div class="timestamp">
+        Updated: <%= updatedAt.toLocaleString() %>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Matchup</th>
+            <th>Score</th>
+            <th>Pregame Moneyline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (games.length === 0) { %>
+          <tr>
+            <td colspan="3" class="empty">No live games found.</td>
+          </tr>
+          <% } %>
+          <% games.forEach((game) => { %>
+          <tr>
+            <td>
+              <strong><%= game.awayName %></strong> vs
+              <strong><%= game.homeName %></strong>
+            </td>
+            <td>
+              <% if (game.score) { %>
+              <span>
+                <%= game.score.away %> - <%= game.score.home %>
+                <% if (game.score.estimated) { %>
+                <span class="tag">estimated</span>
+                <% } %>
+              </span>
+              <% } else { %>
+              <span class="muted">Score unavailable</span>
+              <% } %>
+            </td>
+            <td>
+              <span>
+                Away: <%= game.odds.awayMl ?? "N/A" %> / Home:
+                <%= game.odds.homeMl ?? "N/A" %>
+              </span>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <section class="footer">
+        <p>
+          Odds are pregame only and will not update live. Fallback scores are
+          estimates when official live scores are missing.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
